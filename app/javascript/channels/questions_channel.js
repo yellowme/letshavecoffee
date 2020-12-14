@@ -12,19 +12,22 @@ const questionsChannel = consumer.subscriptions.create(
     disconnected() {},
 
     received(data) {
-      console.log("received", data)
+      $('.questions-container').slick('slickGoTo', data.slide)
     }
   }
 )
 
 document.addEventListener('turbolinks:load', () => {
-  let nextButtons = document.querySelectorAll(".nextButton")
+  $('.questions-container').slick({
+    arrows: false,
+  })
+
+  let nextButtons = document.querySelectorAll(".next-button")
   nextButtons.forEach((el) => {
     el.addEventListener("click", (e) => {
       e.preventDefault()
-      let page = e.target.getAttribute("data-id")
-      let data = { go_to_page: page }
-      questionsChannel.send(data)
+      let currentSlide = $('.questions-container').slick('slickCurrentSlide')
+      questionsChannel.send({ slide: currentSlide + 1 })
     })
   })
 })
